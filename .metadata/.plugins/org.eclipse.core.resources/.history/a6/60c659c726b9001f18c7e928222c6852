@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Application</title>
+    <style>
+        #chatWindow { border: 1px solid #ccc; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+        .message { padding: 5px; }
+        .message.sender { color: blue; }
+        .message.receiver { color: green; }
+    </style>
+</head>
+<body>
+    <div id="chatWindow"></div>
+    <form id="chatForm">
+        <input type="text" id="messageInput" placeholder="Type a message..." required />
+        <button type="submit">Send</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script>
+    const chatWindow = document.getElementById('chatWindow');
+    const messageInput = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+
+    // WebSocket connection
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    // Fetch messages from the server on page load
+    fetch('/api/messages')
+        .then(response => response.json())
+        .then(messages => {
+            messages.forEach(displayMessage);
+        });
+
+    // Connect to WebSocket
+    stompClient.connect({}, function () {
+        stompClient.subscribe('/topic/public', function (messageOutput) {
+            const message = JSON.parse(messageOutput.body);
+            displayMessage(message);
+        });
+    });
+
+    // Send message on form submission
+    chatForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const messageContent = messageInput.value.trim();
+        if (messageContent) {
+            const message = { sender: 'User1', content: messageContent };
+            stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+            messageInput.value = '';
+        }
+    });
+
+    // Display a message in the chat window
+    function displayMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.textContent = `${message.timestamp} - ${message.sender}: ${message.content}`;
+        chatWindow.appendChild(messageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

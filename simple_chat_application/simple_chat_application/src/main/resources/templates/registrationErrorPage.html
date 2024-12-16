@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+  <style>
+    /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    background: linear-gradient(135deg, #2a0845, #6441a5);
+    overflow: hidden; /* Prevent scroll due to animation */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Welcome Page Container */
+  .welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .welcome-box {
+    background: #2a0845;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 40px 60px;
+    width: 500px;
+    text-align: center;
+    color: white;
+    position: relative;
+  }
+  
+  h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #d1c4e9;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #a02fc2, #d62d92);
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .btn:hover {
+    background: linear-gradient(135deg, #d62d92, #a02fc2);
+    transform: scale(1.05);
+  }
+  
+  /* Bubble Animations */
+  body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+  }
+  
+  .bubble {
+    position: absolute;
+    bottom: -100px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: bubbleMove 10s infinite ease-in-out;
+    animation-delay: calc(-1s * var(--i));
+  }
+  
+  @keyframes bubbleMove {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-500px) translateX(50px);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-1000px) translateX(-50px);
+      opacity: 0;
+    }
+  }
+  
+  /* Random Bubbles */
+  body .bubble:nth-child(1) {
+    --i: 0;
+    left: 20%;
+    width: 60px;
+    height: 60px;
+  }
+  body .bubble:nth-child(2) {
+    --i: 2;
+    left: 40%;
+    width: 50px;
+    height: 50px;
+  }
+  body .bubble:nth-child(3) {
+    --i: 4;
+    left: 60%;
+    width: 70px;
+    height: 70px;
+  }
+  body .bubble:nth-child(4) {
+    --i: 6;
+    left: 80%;
+    width: 40px;
+    height: 40px;
+  }
+  body .bubble:nth-child(5) {
+    --i: 8;
+    left: 10%;
+    width: 55px;
+    height: 55px;
+  }
+  
+  </style>
+</head>
+<body>
+  <div class="welcome-container">
+    <form class="welcome-box" action="/registrationErrorPage">
+      <h1>Error!</h1>
+      <p>Above Email address was already exist try with another email or do login!</p>
+      <div class="button-group">
+        <a href="/registration" class="btn">Sign In</a>
+        <a href="/login" class="btn">Log In</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Add Bubble Divs -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+</body>
+</html>

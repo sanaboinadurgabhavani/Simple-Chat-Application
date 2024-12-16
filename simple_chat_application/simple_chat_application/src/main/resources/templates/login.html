@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <style>
+	* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    background: linear-gradient(135deg, #2a0845, #6441a5);
+    animation: gradientAnimation 6s infinite alternate;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  /* Animated Gradient Background */
+  @keyframes gradientAnimation {
+    0% {
+      background: linear-gradient(135deg, #2a0845, #6441a5);
+    }
+    50% {
+      background: linear-gradient(135deg, #3c096c, #7f00ff);
+    }
+    100% {
+      background: linear-gradient(135deg, #4b0082, #ff0099);
+    }
+  }
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+  
+  .login-box {
+    background: #2a0845;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 30px 40px;
+    width: 400px;
+    color: white;
+    text-align: center;
+    position: relative;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .input-field {
+    margin: 15px 0;
+    position: relative;
+  }
+  
+  .input-field .icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+  }
+  
+  .input-field input {
+    width: 100%;
+    padding: 10px 40px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    background: #4b0c6a;
+    color: white;
+  }
+  
+  .input-field input::placeholder {
+    color: #ffffffb3;
+  }
+  
+  /* Animated Button Hover */
+  .login-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #a02fc2, #d62d92);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background: linear-gradient(135deg, #d62d92, #a02fc2);
+    transform: scale(1.1);
+  }
+  
+  .options {
+    margin-top: 15px;
+  }
+  
+  .options a {
+    color: #d62d92;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .options a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Floating Background Circles Animation */
+  .login-container::before,
+  .login-container::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+  }
+  
+  .login-container::before {
+    width: 300px;
+    height: 300px;
+    background: #5e0e6b;
+    top: -50px;
+    left: -50px;
+    animation: float 8s ease-in-out infinite alternate;
+  }
+  
+  .login-container::after {
+    width: 400px;
+    height: 400px;
+    background: #4e007e;
+    bottom: -80px;
+    right: -100px;
+    animation: float 10s ease-in-out infinite alternate-reverse;
+  }
+  
+  /* Keyframe for Floating Effect */
+  @keyframes float {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(20px, -20px);
+    }
+    100% {
+      transform: translate(-20px, 20px);
+    }
+  }
+    
+
+    
+</style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>Login</h2>
+      <form action="/login" method="post" th:object="${login}">
+        <div class="input-field">
+          <span class="icon">📧</span>
+          <input type="email" placeholder="Email" th:field="*{email}" required>
+        </div>
+        <div class="input-field">
+          <span class="icon">🔒</span>
+          <input type="password" placeholder="Password" th:field="*{password}" required>
+        </div>
+        <button type="submit" class="login-btn">Log In</button>
+      </form>
+      <div class="options">
+      <a href="/login">Login</a>
+        <a href="/registration">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

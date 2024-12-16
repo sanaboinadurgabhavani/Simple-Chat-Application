@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      background: linear-gradient(135deg, #2a0845, #6441a5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* Chat Page Container */
+    .chat-container {
+      background: #2a0845;
+      border-radius: 15px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #chatWindow {
+      border: 2px solid #d1c4e9;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 100%;
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .message {
+      padding: 5px;
+      margin-bottom: 5px;
+      border-radius: 8px;
+      word-wrap: break-word;
+    }
+
+    .message.sender {
+      color: #a8e6cf;
+      text-align: right;
+    }
+
+    .message.receiver {
+      color: #ff8b94;
+      text-align: left;
+    }
+
+    form {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #d1c4e9;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #a02fc2, #d62d92);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #d62d92, #a02fc2);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h1>Chat Application</h1>
+    <div id="chatWindow"></div>
+    <form id="chatForm">
+      <input type="text" id="messageInput" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+  <script>
+    const chatWindow = document.getElementById('chatWindow');
+    const messageInput = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+    // WebSocket connection
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+ // Fetch and display previous messages on page load
+    fetch('/chat/messages')
+      .then(response => response.json())
+      .then(messages => {
+        messages.forEach(displayMessage);
+      });
+
+ // Fetch messages from the server on page load
+    fetch('/api/messages')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch messages');
+        }
+        return response.json();
+      })
+      .then(messages => {
+        messages.forEach(displayMessage);
+      })
+      .catch(error => {
+        console.error('Error fetching messages:', error);
+      });
+    // Connect to WebSocket
+    stompClient.connect({}, function () {
+      stompClient.subscribe('/topic/public', function (messageOutput) {
+        const message = JSON.parse(messageOutput.body);
+        displayMessage(message);
+      });
+    });
+    // Send message on form submission
+    chatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const messageContent = messageInput.value.trim();
+      if (messageContent) {
+        const message = { sender: 'User1', content: messageContent };
+        stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+        messageInput.value = '';
+      }
+    });
+
+    // Display a message in the chat window
+    function displayMessage(message) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${message.sender === 'User1' ? 'sender' : 'receiver'}`;
+      messageDiv.textContent = `${message.timestamp || ''} - ${message.sender}: ${message.content}`;
+      chatWindow.appendChild(messageDiv);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+  </script>
+</body>
+</html>

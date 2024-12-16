@@ -1,0 +1,58 @@
+package com.chatapplication.chatapp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.chatapplication.chatapp.model.Message;
+import com.chatapplication.chatapp.model.Registration;
+import com.chatapplication.chatapp.repository.LoginRepository;
+import com.chatapplication.chatapp.repository.MessageRepository;
+import com.chatapplication.chatapp.repository.RegistrationRepository;
+
+@Service
+public class MessageService {
+
+	    @Autowired
+	    private MessageRepository messageRepository;
+	    @Autowired
+	    private RegistrationRepository registrationRepository;
+
+	    @Autowired
+	    public MessageService(MessageRepository messageRepository) {
+	        this.messageRepository = messageRepository;
+	    }
+
+//<--------------------------------Chat-------------------------------------->
+	    public Message saveMessage(Message message) {
+	        return messageRepository.save(message);
+	    }
+
+	    public List<Message> getAllMessages() {
+	        return messageRepository.findAll();
+	    }
+//<--------------------------Registration----------------------------------->
+	    public boolean saveRegistration(Registration registration) {
+	    	Registration reg=new Registration();
+	    	reg.setName(registration.getName());
+	    	reg.setEmail(registration.getEmail());
+	    	reg.setPassword(registration.getPassword());
+	    	reg.setConfirmPassword(registration.getConfirmPassword());
+	    	
+	    	registrationRepository.save(reg);
+	    	return true;
+	    }
+//<--------------------------Login----------------------------------->
+	    public boolean loginValidation(String name, String password) {
+	        // Fetch user from the database
+	    	Registration user =registrationRepository.findByName(name);
+	        
+	        // Check if the user exists and password matches
+	        if (user != null && user.getPassword().equals(password)) {
+	            return true;
+	        }
+	        return false;
+	    }
+		
+}

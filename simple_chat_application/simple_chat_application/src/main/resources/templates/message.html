@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #chat-container {
+            width: 80%;
+            max-width: 600px;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            margin-bottom: 10px;
+        }
+
+        #chat-box p {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        #chat-box p.sent {
+            background-color: #d1e7dd;
+            align-self: flex-end;
+        }
+
+        #chat-box p.received {
+            background-color: #f8d7da;
+            align-self: flex-start;
+        }
+
+        #message-input {
+            width: calc(100% - 80px);
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        #send-btn {
+            width: 70px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #send-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div style="display: flex;">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        const messageInput = document.getElementById("message-input");
+        const sendBtn = document.getElementById("send-btn");
+
+        // Create WebSocket connection
+        const socket = new WebSocket("ws://localhost:8080/chat");
+
+        // Retrieve messages from the database
+        fetch("http://localhost:8080/api/messages")
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(message => {
+                    const messageElement = document.createElement("p");
+                    messageElement.textContent = message.content;
+                    messageElement.classList.add("received"); // Mark it as received
+                    chatBox.appendChild(messageElement);
+                });
+            });
+
+        // Handle incoming messages
+        socket.onmessage = function (event) {
+            const messageElement = document.createElement("p");
+            messageElement.textContent = event.data;
+            messageElement.classList.add("received");
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        // Send a message
+        sendBtn.addEventListener("click", () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                // Display the sent message in the chat box
+                const messageElement = document.createElement("p");
+                messageElement.textContent = message;
+                messageElement.classList.add("sent");
+                chatBox.appendChild(messageElement);
+
+                // Send the message via WebSocket
+                socket.send(message);
+
+                // Clear the input field
+                messageInput.value = "";
+            }
+        });
+
+        // Handle WebSocket errors
+        socket.onerror = function (error) {
+            console.error("WebSocket error:", error);
+        };
+
+        // Handle WebSocket closure
+        socket.onclose = function () {
+            const messageElement = document.createElement("p");
+            messageElement.textContent = "Connection closed.";
+            chatBox.appendChild(messageElement);
+        };
+    </script>
+</body>
+</html>

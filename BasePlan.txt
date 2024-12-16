@@ -1,0 +1,21 @@
+                                        Base Plan
+
+1. Frontend (HTML, CSS, JavaScript)
+HTML/CSS: Design a clean and simple user interface with a login page and a chat room 
+interface. Use CSS to style the layout and improve usability.
+JavaScript: Use JavaScript to manage user interactions, such as sending and 
+receiving messages in real-time.
+
+2. Backend (Java, JDBC, Servlet, Hibernate, Spring Boot)
+User Authentication: Use Servlets and JDBC to handle user login and registration, 
+validating user credentials against an SQL database.
+Message Storage: Use Hibernate to manage messages and store them in the database, 
+allowing users to view previous chats.
+Message Handling: Use Spring Boot with WebSocket or RESTful APIs for message handling,
+ensuring real-time updates in the chat room.
+
+3. Database (SQL)
+Design tables for users (with details like username and password) and messages (with details 
+like sender, receiver, timestamp, and content).
+With these elements, your chat application will allow users to log in, send messages, and view 
+chat history. 
